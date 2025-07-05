@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Settings | News Aggregator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/static/darkmode.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --error: #f72585;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            /* Changed from 5 */
+            padding: 0;
+            /* Changed from 5 */
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+            transition: all 0.4s ease;
+            /* Smooth transition */
+        }
+
+
+        .settings-container {
+            margin: 0 auto 50px;
+            margin-top: 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .settings-container:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .settings-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .settings-header h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .settings-header p {
+            color: var(--accent);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 85%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .api-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .api-section h2 {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .api-section h2 svg {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 38px;
+            cursor: pointer;
+            color: var(--dark);
+            opacity: 0.6;
+        }
+
+        .toggle-password:hover {
+            opacity: 1;
+        }
+
+        .loader {
+            display: none;
+            margin: 10px auto;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .status-message {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .success {
+            background-color: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+        }
+
+        .error {
+            background-color: rgba(247, 37, 133, 0.2);
+            color: var(--error);
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+        }
+
+        .docs-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .docs-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .docs-section h2 {
+            color: #3f37c9;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .docs-section code {
+            background: #f5f7fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+
+        .endpoint {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #4361ee;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'navbar.html' %}
+    <div class="settings-container">
+        <div class="settings-header">
+            <h1>API Configuration</h1>
+            <p>Connect your services to enable full functionality</p>
+        </div>
+
+        <form id="apiSettings">
+            <div class="api-section">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M8 10h8v2H8zm0 4h5v2H8zm9-11H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H7V7h10z" />
+                    </svg>
+                    GNews API
+                </h2>
+                <div class="form-group">
+                    <label for="GNEWS_API_KEY">API Key</label>
+                    <input type="password" id="GNEWS_API_KEY" name="GNEWS_API_KEY" class="form-control"
+                        placeholder="Enter your GNews API key">
+                    <span class="toggle-password" onclick="toggleVisibility('GNEWS_API_KEY')">👁️</span>
+                </div>
+            </div>
+
+            <div class="api-section">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm-1-13v6h2V7h-2zm0 8v2h2v-2h-2z" />
+                    </svg>
+                    OpenRouter API
+                </h2>
+                <div class="form-group">
+                    <label for="OPENROUTER_API_KEY">API Key</label>
+                    <input type="password" id="OPENROUTER_API_KEY" name="OPENROUTER_API_KEY" class="form-control"
+                        placeholder="Enter your OpenRouter API key">
+                    <span class="toggle-password" onclick="toggleVisibility('OPENROUTER_API_KEY')">👁️</span>
+                </div>
+            </div>
+
+            <div class="api-section">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 01-1.93.07 4.28 4.28 0 004 2.98 8.521 8.521 0 01-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z" />
+                    </svg>
+                    Twitter API
+                </h2>
+                <div class="form-group">
+                    <label for="TWITTER_API_KEY">API Key</label>
+                    <input type="password" id="TWITTER_API_KEY" name="TWITTER_API_KEY" class="form-control"
+                        placeholder="Enter your Twitter API key">
+                    <span class="toggle-password" onclick="toggleVisibility('TWITTER_API_KEY')">👁️</span>
+                </div>
+                <div class="form-group">
+                    <label for="TWITTER_API_SECRET">API Secret</label>
+                    <input type="password" id="TWITTER_API_SECRET" name="TWITTER_API_SECRET" class="form-control"
+                        placeholder="Enter your Twitter API secret">
+                    <span class="toggle-password" onclick="toggleVisibility('TWITTER_API_SECRET')">👁️</span>
+                </div>
+                <div class="form-group">
+                    <label for="TWITTER_ACCESS_TOKEN">Access Token</label>
+                    <input type="password" id="TWITTER_ACCESS_TOKEN" name="TWITTER_ACCESS_TOKEN" class="form-control"
+                        placeholder="Enter your Twitter access token">
+                    <span class="toggle-password" onclick="toggleVisibility('TWITTER_ACCESS_TOKEN')">👁️</span>
+                </div>
+                <div class="form-group">
+                    <label for="TWITTER_ACCESS_SECRET">Access Secret</label>
+                    <input type="password" id="TWITTER_ACCESS_SECRET" name="TWITTER_ACCESS_SECRET" class="form-control"
+                        placeholder="Enter your Twitter access secret">
+                    <span class="toggle-password" onclick="toggleVisibility('TWITTER_ACCESS_SECRET')">👁️</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Save API Keys</button>
+            <div class="loader" id="loader"></div>
+            <div class="status-message" id="status-message"></div>
+        </form>
+    </div>
+    <script src="/static/darkmode.js"></script>
+    <script>
+        // Toggle password visibility
+        function toggleVisibility(fieldId) {
+            const field = document.getElementById(fieldId);
+            field.type = field.type === 'password' ? 'text' : 'password';
+        }
+
+        function setActiveNav() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Run on page load and when navigating back/forward
+        window.addEventListener('load', setActiveNav);
+        window.addEventListener('popstate', setActiveNav);
+
+        // Form submission
+        document.getElementById("apiSettings").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const loader = document.getElementById('loader');
+            const submitBtn = document.querySelector('.btn');
+            const statusMessage = document.getElementById('status-message');
+
+            // Show loading state
+            submitBtn.disabled = true;
+            loader.style.display = 'block';
+            submitBtn.textContent = 'Saving...';
+            statusMessage.style.display = 'none';
+
+            try {
+                const formData = Object.fromEntries(new FormData(e.target));
+                const response = await fetch("/api/api-keys", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    statusMessage.textContent = "API keys saved successfully!";
+                    statusMessage.className = "status-message success";
+                } else {
+                    const errorData = await response.json();
+                    statusMessage.textContent = errorData.detail || "Failed to save API keys";
+                    statusMessage.className = "status-message error";
+                }
+            } catch (error) {
+                statusMessage.textContent = "Network error. Please check your connection.";
+                statusMessage.className = "status-message error";
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                loader.style.display = 'none';
+                submitBtn.textContent = 'Save API Keys';
+                statusMessage.style.display = 'block';
+            }
+        });
+
+        // Load saved keys if available
+        async function loadSavedKeys() {
+            try {
+                const response = await fetch("/api/api-keys", {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+                    }
+                });
+
+                if (response.ok) {
+                    const keys = await response.json();
+                    for (const [key, value] of Object.entries(keys)) {
+                        const input = document.querySelector(`[name="${key}"]`);
+                        if (input) input.value = value;
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to load saved keys:", error);
+            }
+        }
+
+        const path = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === path) {
+                link.classList.add('active');
+            }
+        });
+
+        // Logout functionality
+        document.getElementById('logout-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('access_token');
+            window.location.href = '/login';
+        });
+        // Load keys when page loads
+        document.addEventListener('DOMContentLoaded', loadSavedKeys);
+    </script>
+</body>
+
+</html>

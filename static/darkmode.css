@@ -1,0 +1,352 @@
+/* ===== Enhanced Dark Mode Toggle ===== */
+/* Dark Mode Styles */
+body.dark-mode {
+  background: #121212;
+  color: #f0f0f0;
+}
+
+body.dark-mode .navbar {
+  background: #1a1a1a !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .container,
+body.dark-mode .docs-container,
+body.dark-mode .settings-container {
+  background: #1e1e1e !important;
+  color: #f0f0f0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode .form-control {
+  background: #252525 !important;
+  border-color: #444 !important;
+  color: #fff !important;
+}
+
+/* Add this to ensure text elements change color */
+body.dark-mode p,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: #f0f0f0;
+}
+
+.dark-mode-toggle {
+  background: linear-gradient(145deg, #e0e0e0, #ffffff);
+  border: none;
+  border-radius: 50px;
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.1),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+  color: #333;
+}
+
+.dark-mode-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.15),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode-toggle:active {
+  transform: translateY(0);
+}
+
+/* Dynamic Icon */
+.dark-mode-toggle .icon {
+  font-size: 18px;
+  transition: all 0.4s ease;
+}
+
+.dark-mode-toggle .text {
+  transition: all 0.3s ease;
+}
+
+/* Ripple Effect */
+.dark-mode-toggle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.dark-mode-toggle:focus:not(:active)::after {
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(20, 20);
+    opacity: 0;
+  }
+}
+
+/* Dark Mode Styles */
+body.dark-mode .dark-mode-toggle {
+  background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+  color: #f0f0f0;
+  box-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .dark-mode-toggle:hover {
+  background: linear-gradient(145deg, #333333, #252525);
+}
+
+/* Dynamic Icon States */
+body:not(.dark-mode) .dark-mode-toggle .icon::before {
+  content: "🌙";
+}
+
+body.dark-mode .dark-mode-toggle .icon::before {
+  content: "☀️";
+  filter: hue-rotate(10deg) brightness(1.1);
+}
+
+/* Text Change Animation */
+body:not(.dark-mode) .dark-mode-toggle .text::after {
+  content: "Dark Mode";
+}
+
+body.dark-mode .dark-mode-toggle .text::after {
+  content: "Light Mode";
+}
+
+.animate-toggle {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+/* Add this to your existing darkmode.css */
+body.dark-mode .form-group label,
+body.dark-mode .form-group .hint,
+body.dark-mode .form-group i {
+  color: #ffffff !important;
+}
+
+body.dark-mode .subtitle {
+  color: #cccccc !important;
+}
+
+body.dark-mode h1 {
+  color: #4da6ff !important; /* Slightly blue tint for better visibility */
+}
+
+body.dark-mode .result-container h3 {
+  color: #4da6ff !important;
+}
+
+body.dark-mode .status-message {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Documentation Dark Mode Styles */
+body.dark-mode .docs-container {
+  background: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .docs-section {
+  border-bottom: 1px solid #444;
+}
+
+body.dark-mode .docs-section h2,
+body.dark-mode .docs-section h3 {
+  color: #4da6ff !important;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+body.dark-mode .endpoint,
+body.dark-mode .api-endpoint-info {
+  background: #252525 !important;
+  border-left: 4px solid #4361ee !important;
+  color: #f0f0f0 !important;
+}
+
+/* Code blocks and preformatted text */
+body.dark-mode code,
+body.dark-mode pre {
+  background: #2d2d2d !important;
+  color: #f8f8f8 !important;
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+}
+
+body.dark-mode pre {
+  padding: 1rem;
+  border-left: 4px solid #4895ef;
+  overflow-x: auto;
+}
+
+/* JSON examples */
+body.dark-mode .request-format,
+body.dark-mode .response-example {
+  background: #252525 !important;
+  border: 1px solid #444 !important;
+}
+
+body.dark-mode .request-format h4,
+body.dark-mode .response-example h4 {
+  color: #4cc9f0 !important;
+  background: #333;
+  padding: 0.5rem 1rem;
+  margin: 0;
+}
+
+/* Authentication sections */
+body.dark-mode .auth-info {
+  background: #252525 !important;
+  border-left: 4px solid #3f37c9 !important;
+}
+
+body.dark-mode .auth-method {
+  color: #4cc9f0 !important;
+}
+
+body.dark-mode .token-example {
+  background: #2d2d2d !important;
+  color: #f8f8f8 !important;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+/* Lists and bullets */
+body.dark-mode .docs-section ul,
+body.dark-mode .docs-section ol {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .docs-section li {
+  margin-bottom: 0.5rem;
+}
+
+/* Status indicators */
+body.dark-mode .status-active {
+  color: #4cc9f0 !important;
+}
+
+body.dark-mode .status-secure {
+  color: #4ade80 !important;
+}
+
+/* API Key Setup Instructions - Dark Mode */
+body.dark-mode .api-setup-container {
+  background: #1e1e1e !important;
+  border: 1px solid #444 !important;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+body.dark-mode .api-service {
+  background: #252525 !important;
+  border-left: 4px solid #4361ee !important;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 4px;
+}
+
+body.dark-mode .api-service h3 {
+  color: #4da6ff !important;
+  margin-top: 0;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+body.dark-mode .api-steps {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .api-steps li {
+  margin: 0.8rem;
+  line-height: 1.6;
+}
+
+body.dark-mode .api-note {
+  background: #2d2d2d !important;
+  border-left: 4px solid #4895ef !important;
+  padding: 0.8rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+body.dark-mode .api-note strong {
+  color: #4cc9f0 !important;
+}
+
+body.dark-mode .api-key-item {
+  background: #2d2d2d !important;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  margin: 0.3rem 0;
+  display: inline-block;
+}
+
+body.dark-mode .api-link {
+  color: #4da6ff !important;
+  text-decoration: none;
+}
+
+body.dark-mode .api-link:hover {
+  text-decoration: underline;
+}
+
+body.dark-mode .api-plan-info {
+  color: #4cc9f0 !important;
+  font-weight: 500;
+}
+/* Dark Mode Styles for Generated Tweet Section */
+body.dark-mode .result-container {
+  background: #1e1e1e !important;
+  border-left: 4px solid #4895ef !important;
+}
+
+body.dark-mode .result-container h3 {
+  color: #4da6ff !important;
+}
+
+body.dark-mode #tweetResult {
+  background: #252525 !important;
+  color: #f0f0f0 !important;
+  border: 1px solid #444 !important;
+}
+
+body.dark-mode #tweetLink {
+  color: #4da6ff !important;
+}
+
+body.dark-mode #tweetLink:hover {
+  color: #3f37c9 !important;
+}

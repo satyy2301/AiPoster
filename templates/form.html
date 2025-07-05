@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Aggregator | Twitter Poster</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/static/darkmode.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --success: #4cc9f0;
+            --error: #f72585;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+
+        .hint {
+            color: var(--gray);
+            font-size: 0.85rem;
+            display: block;
+            margin-top: 0.3rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .loader {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .status-message {
+            padding: 12px;
+            margin: 1rem 0;
+            border-radius: 8px;
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .success {
+            background-color: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        .error {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: var(--error);
+            border-left: 4px solid var(--error);
+        }
+
+        .result-container {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .result-container h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        #tweetResult {
+            white-space: pre-line;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid var(--light-gray);
+        }
+
+        #tweetLink {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        #tweetLink:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+        }
+
+        .docs-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .docs-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .docs-section h2 {
+            color: #3f37c9;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .docs-section code {
+            background: #f5f7fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+
+        .endpoint {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #4361ee;
+        }
+
+        .trending-topic {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 0 5px 5px 0;
+            background-color: #1c354e;
+            color: #000000;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .trending-topic:hover {
+            background-color: #364452;
+        }
+
+        .loading-text {
+            color: #000000;
+            font-style: italic;
+        }
+
+        /* Dark mode styles */
+        @media (prefers-color-scheme: dark) {
+            .trending-topic {
+                background-color: #495057;
+                color: #000000;
+            }
+
+            .trending-topic:hover {
+                background-color: #0058a5;
+            }
+
+            .loading-text {
+                color: #000000;
+            }
+        }
+
+        /* If you want to support manual dark mode toggle via class */
+        .dark-mode .trending-topic {
+            background-color: #495057;
+            color: #0080ff;
+        }
+
+        .dark-mode .trending-topic:hover {
+            background-color: #6c757d;
+        }
+
+        .dark-mode .loading-text {
+            color: #090909;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="container">
+        <header>
+            <h1>News Aggregator</h1>
+            <p class="subtitle">Generate and post news summaries to Twitter</p>
+        </header>
+
+        <div class="trending-section" style="margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+            <h3 style="margin-bottom: 10px;">Trending Topics</h3>
+            <div id="trendingTopics" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <span class="loading-text">Loading trending topics...</span>
+            </div>
+        </div>
+
+        <form id="newsForm">
+            <div class="form-group">
+                <label for="keywords">
+                    <i class="fas fa-search"></i> Keywords
+                </label>
+                <input type="text" id="keywords" name="keywords" placeholder="e.g., technology, AI, innovation"
+                    required>
+                <small class="hint">Separate multiple keywords with commas</small>
+            </div>
+
+            <div class="form-group">
+                <label for="timeframe">
+                    <i class="fas fa-clock"></i> Timeframe
+                </label>
+                <select id="timeframe" name="timeframe">
+                    <option value="24h">Last 24 Hours</option>
+                    <option value="week" selected>Last Week</option>
+                    <option value="month">Last Month</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tone">
+                    <i class="fas fa-paint-brush"></i> Tone
+                </label>
+                <select id="tone" name="tone">
+                    <option value="neutral" selected>Neutral</option>
+                    <option value="professional">Professional</option>
+                    <option value="casual">Casual</option>
+                    <option value="enthusiastic">Enthusiastic</option>
+                    <option value="humorous">Humorous</option>
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fab fa-twitter"></i> Generate and Post
+            </button>
+
+            <div class="loader" id="loader"></div>
+            <div class="status-message" id="status-message"></div>
+        </form>
+
+        <div id="result" class="result-container">
+            <h3>
+                <i class="fas fa-check-circle"></i> Generated Tweet
+            </h3>
+            <p id="tweetResult"></p>
+            <a id="tweetLink" href="#" target="_blank">
+                <i class="fas fa-external-link-alt"></i> View on Twitter
+            </a>
+        </div>
+    </div>
+    <script src="/static/darkmode.js"></script>
+    <script>
+        function setActiveNav() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Run on page load and when navigating back/forward
+        window.addEventListener('load', setActiveNav);
+        window.addEventListener('popstate', setActiveNav);
+
+        function logout() {
+            localStorage.removeItem('access_token');
+            window.location.href = '/login';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if user is logged in
+            if (!localStorage.getItem('access_token')) {
+                window.location.href = '/login';
+                return;
+            }
+
+            document.getElementById('newsForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const loader = document.getElementById('loader');
+                const statusMessage = document.getElementById('status-message');
+                const resultDiv = document.getElementById('result');
+                const tweetResult = document.getElementById('tweetResult');
+                const tweetLink = document.getElementById('tweetLink');
+                const submitBtn = document.querySelector('.submit-btn');
+
+                const token = localStorage.getItem('access_token');
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const keywords = document.getElementById('keywords').value.trim();
+                if (!keywords) {
+                    statusMessage.textContent = 'Please enter at least one keyword';
+                    statusMessage.className = 'status-message error';
+                    statusMessage.style.display = 'block';
+                    return;
+                }
+
+                // Show loading state
+                submitBtn.disabled = true;
+                loader.style.display = 'block';
+                statusMessage.style.display = 'none';
+                resultDiv.style.display = 'none';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+                try {
+                    const formData = {
+                        keywords: keywords.split(',').map(k => k.trim()),
+                        timeframe: document.getElementById('timeframe').value,
+                        tone: document.getElementById('tone').value
+                    };
+
+                    const response = await fetch('/generate-and-post', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Request failed');
+                    }
+
+                    const data = await response.json();
+
+                    // Show results
+                    tweetResult.textContent = data.tweet;
+                    if (data.tweet_url) {
+                        tweetLink.href = data.tweet_url;
+                        tweetLink.style.display = 'inline';
+                    } else {
+                        tweetLink.style.display = 'none';
+                    }
+                    resultDiv.style.display = 'block';
+
+                    // Show success message
+                    statusMessage.textContent = data.tweet_url
+                        ? 'Tweet posted successfully!'
+                        : 'Tweet generated successfully (not posted)';
+                    statusMessage.className = 'status-message success';
+
+                } catch (error) {
+                    statusMessage.textContent = error.message;
+                    statusMessage.className = 'status-message error';
+
+                    if (error.message.includes('validate credentials') ||
+                        error.message.includes('Unauthorized')) {
+                        logout();
+                    }
+                } finally {
+                    submitBtn.disabled = false;
+                    loader.style.display = 'none';
+                    statusMessage.style.display = 'block';
+                    submitBtn.innerHTML = '<i class="fab fa-twitter"></i> Generate and Post';
+                }
+            });
+
+            // Logout functionality
+            document.getElementById('logout-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('access_token');
+                window.location.href = '/login';
+            });
+
+            fetch('/trending-topics')
+                .then(response => response.json())
+                .then(data => {
+                    const topicsContainer = document.getElementById('trendingTopics');
+                    topicsContainer.innerHTML = '';
+
+                    if (data.topics && data.topics.length > 0) {
+                        data.topics.forEach(topic => {
+                            const topicElement = document.createElement('span');
+                            topicElement.textContent = topic;
+                            topicElement.style.cursor = 'pointer';
+                            topicElement.style.padding = '5px 10px';
+                            topicElement.style.background = '#e1e1e1';
+                            topicElement.style.borderRadius = '15px';
+                            topicElement.style.transition = 'background 0.3s';
+
+                            topicElement.addEventListener('mouseover', () => {
+                                topicElement.style.background = '#d0d0d0';
+                            });
+
+                            topicElement.addEventListener('mouseout', () => {
+                                topicElement.style.background = '#e1e1e1';
+                            });
+
+                            topicElement.addEventListener('click', () => {
+                                // Add the topic to keywords input
+                                const keywordsInput = document.getElementById('keywords');
+                                const currentKeywords = keywordsInput.value;
+
+                                if (currentKeywords) {
+                                    // Check if topic already exists
+                                    const keywordsArray = currentKeywords.split(',').map(k => k.trim());
+                                    if (!keywordsArray.includes(topic)) {
+                                        keywordsInput.value = currentKeywords + ', ' + topic;
+                                    }
+                                } else {
+                                    keywordsInput.value = topic;
+                                }
+                            });
+
+                            topicsContainer.appendChild(topicElement);
+                        });
+                    } else {
+                        topicsContainer.innerHTML = '<span>No trending topics available at the moment.</span>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching trending topics:', error);
+                    document.getElementById('trendingTopics').innerHTML =
+                        '<span>Could not load trending topics. Please try again later.</span>';
+                });
+                
+        });
+    </script>
+</body>
+
+</html>

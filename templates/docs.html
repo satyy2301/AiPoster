@@ -1,0 +1,478 @@
+x
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Aggregator - API Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/static/darkmode.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --success: #4cc9f0;
+            --error: #f72585;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            padding-top: 70px;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .docs-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .docs-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .docs-header h1 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .docs-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .docs-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .docs-section h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .docs-section p,
+        .docs-section ul {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .docs-section ul {
+            padding-left: 1.5rem;
+        }
+
+        .docs-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .endpoint {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .endpoint-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .endpoint-method {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+        }
+
+        pre {
+            background: #f5f7fa;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        code {
+            background: #f5f7fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+            font-size: 0.9rem;
+        }
+
+        .note {
+            background-color: rgba(72, 149, 239, 0.1);
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .docs-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .docs-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+        }
+
+        .api-guide {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .api-guide h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step {
+            margin-bottom: 1.5rem;
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 2.5rem;
+        }
+
+        .step::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: var(--primary);
+            color: white;
+            width: 1.8rem;
+            height: 1.8rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .step img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+        }
+
+        .source-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .source-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="docs-container">
+        <div class="docs-header">
+            <h1><i class="fas fa-book-open"></i> API Documentation</h1>
+            <p>Everything you need to integrate with the News Aggregator service</p>
+        </div>
+
+        <div class="docs-section">
+            <h2><i class="fas fa-info-circle"></i> Getting Started</h2>
+            <p>The News Aggregator API allows you to automatically generate and post news summaries to Twitter. Follow
+                these simple steps to begin:</p>
+            <ol>
+                <li>Configure your API keys in the <a href="/dashboard">Settings</a> page</li>
+                <li>Authenticate using your JWT token</li>
+                <li>Make requests to the API endpoints</li>
+            </ol>
+
+            <div class="note">
+                <p><strong>Note:</strong> All API requests require authentication. See the Authentication section below
+                    for details.</p>
+            </div>
+        </div>
+
+        <div class="docs-section">
+            <h2><i class="fas fa-key"></i> Authentication</h2>
+            <p>Include your JWT token in the Authorization header of every request:</p>
+
+            <div class="endpoint">
+                <div class="endpoint-title">
+                    <span class="endpoint-method">HEADER</span>
+                    <span class="endpoint-path">Authorization</span>
+                </div>
+                <pre>Authorization: Bearer YOUR_ACCESS_TOKEN</pre>
+                <p>Obtain your token by logging in at the <code>/login</code> endpoint.</p>
+            </div>
+        </div>
+
+        <div class="docs-section">
+            <h2><i class="fas fa-exchange-alt"></i> API Endpoints</h2>
+
+            <div class="endpoint">
+                <div class="endpoint-title">
+                    <span class="endpoint-method">POST</span>
+                    <span class="endpoint-path">/generate-and-post</span>
+                </div>
+                <p>Generate a news summary tweet and optionally post it to Twitter.</p>
+
+                <h3>Request Format</h3>
+                <pre>{
+    "keywords": ["technology", "AI"],
+    "timeframe": "24h",  // "24h", "week", or "month"
+    "tone": "professional"  // "neutral", "professional", "casual", "enthusiastic", or "humorous"
+}</pre>
+
+                <h3>Successful Response</h3>
+                <pre>{
+    "success": true,
+    "articles": ["Article 1 title", "Article 2 title"],
+    "tweet": "Generated tweet text...",
+    "tweet_url": "https://twitter.com/status/12345"  // Only if posted to Twitter
+}</pre>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-title">
+                    <span class="endpoint-method">POST</span>
+                    <span class="endpoint-path">/api/api-keys</span>
+                </div>
+                <p>Save your API keys for GNews, OpenRouter, and Twitter.</p>
+
+                <h3>Request Format</h3>
+                <pre>{
+    "GNEWS_API_KEY": "your_gnews_key",
+    "OPENROUTER_API_KEY": "your_openrouter_key",
+    "TWITTER_API_KEY": "your_twitter_key",
+    "TWITTER_API_SECRET": "your_twitter_secret",
+    "TWITTER_ACCESS_TOKEN": "your_access_token",
+    "TWITTER_ACCESS_SECRET": "your_access_secret"
+}</pre>
+            </div>
+        </div>
+
+        <div class="docs-section">
+            <h2><i class="fas fa-code"></i> Example Usage</h2>
+            <p>Here's how to use the API in your JavaScript application:</p>
+
+            <pre>// 1. First get your authentication token
+const login = async () => {
+    const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `username=YOUR_USERNAME&password=YOUR_PASSWORD`
+    });
+    return await response.json();
+};
+
+// 2. Then make API requests
+const generateTweet = async (token) => {
+    const response = await fetch('/generate-and-post', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            keywords: ['technology', 'AI'],
+            timeframe: '24h',
+            tone: 'professional'
+        })
+    });
+    return await response.json();
+};</pre>
+
+            <div class="note">
+                <p><strong>Tip:</strong> You can test the API directly from the <a href="/">Home page</a> before
+                    integrating it into your application.</p>
+            </div>
+        </div>
+
+        <div class="docs-section">
+            <div class="api-setup-container">
+                <h2>API Key Setup Instructions</h2>
+
+                <div class="api-service">
+                    <h3>GNews API Key</h3>
+                    <ol class="api-steps">
+                        <li>Go to the <a href="https://gnews.io/" class="api-link" target="_blank">GNews website</a> and
+                            click "Get API Key"</li>
+                        <li>Register for a free account (no credit card required)</li>
+                        <li>Verify your email address</li>
+                        <li>Find your API key in the dashboard</li>
+                    </ol>
+                    <div class="api-note">
+                        <strong>Free Plan:</strong> <span class="api-plan-info">100 requests/day, 1
+                            request/second</span>
+                    </div>
+                </div>
+
+                <div class="api-service">
+                    <h3>OpenRouter API Key</h3>
+                    <ol class="api-steps">
+                        <li>Visit <a href="https://openrouter.ai/" class="api-link" target="_blank">OpenRouter.ai</a>
+                            and click "Sign Up"</li>
+                        <li>Create an account using your email or GitHub</li>
+                        <li>Go to "Keys" in your account settings</li>
+                        <li>Create a new key and copy it</li>
+                    </ol>
+                    <div class="api-note">
+                        <strong>Note:</strong> Free tier has limited requests to AI models
+                    </div>
+                </div>
+
+                <div class="api-service">
+                    <h3>Twitter API Keys</h3>
+                    <ol class="api-steps">
+                        <li>Go to the <a href="https://developer.twitter.com/" class="api-link" target="_blank">Twitter
+                                Developer Portal</a></li>
+                        <li>Apply for a developer account (approval may take 1-2 days)</li>
+                        <li>Create a new Project and App in the developer portal</li>
+                        <li>Under "Keys and Tokens", generate and copy:
+                            <div class="api-key-item">API Key and Secret</div>
+                            <div class="api-key-item">Access Token and Secret</div>
+                        </li>
+                    </ol>
+                    <div class="api-note">
+                        <strong>Note:</strong> Free tier has posting limits
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/darkmode.js"></script>
+    <script>
+        // Handle navigation active states
+        function setActiveNav() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Run on page load and when navigating back/forward
+        window.addEventListener('load', setActiveNav);
+        window.addEventListener('popstate', setActiveNav);
+
+        // Logout functionality
+        document.getElementById('logout-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('access_token');
+            window.location.href = '/login';
+        });
+    </script>
+</body>
+
+</html>

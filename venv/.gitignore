@@ -1,0 +1,45 @@
+# Python files
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyd
+*.pyo
+*.so
+*.egg-info/
+*.egg
+.python-version
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# Environment variables
+.env
+.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Project-specific ignores
+/static/__pycache__/
+/templates/__pycache__/
+/.pytest_cache/
+/htmlcov/
+*.cover
+.coverage
