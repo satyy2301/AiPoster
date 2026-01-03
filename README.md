@@ -5,6 +5,14 @@
 - Generates engaging tweets using AI
 - Ready-to-use API endpoint
 
+## 📸 Screenshots
+
+### Chat Interface
+![Chat Interface](images/Screenshot%202025-12-31%20204640.png)
+
+### Map & Timeline View  
+![Map View](images/Screenshot%202025-12-31%20204659.png)
+
 ## Setup
 1. Create `.env` file with your API keys
 2. Install requirements: `pip install -r requirements.txt`
