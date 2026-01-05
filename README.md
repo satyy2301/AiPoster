@@ -1,6 +1,3 @@
-Here's a polished, professional README for your AIPoster project:
-
----
 
 # 🤖 AIPoster – AI-Powered News Aggregator & Auto-Tweeter
 
