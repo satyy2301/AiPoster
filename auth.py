@@ -34,7 +34,8 @@ except Exception as e:
 # Security setup - Get from config
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
+REFRESH_TOKEN_EXPIRE_DAYS = 7  # 7 days
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -124,6 +125,7 @@ def authenticate_user(username: str, password: str):
         return False
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
+    """Create access token with optional custom expiration"""
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -132,6 +134,23 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+def create_refresh_token(data: dict):
+    """Create a longer-lived refresh token"""
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    to_encode.update({"exp": expire, "type": "refresh"})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+def verify_token(token: str):
+    """Verify token and return payload, or raise exception"""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError as e:
+        logger.warning(f"Token verification failed: {e}")
+        return None
 
 def encrypt_data(data: str, key: str) -> str:
     fernet = Fernet(key)

@@ -3,17 +3,20 @@ from datetime import timedelta
 from fastapi import Depends, FastAPI, Form, HTTPException, Body, status
 import auth
 from config import UserInput, TimeFrame, settings
-from auth import User, authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+from auth import User, authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, create_refresh_token, verify_token
 import requests
 import tweepy
 from typing import List
 import logging
 from tenacity import retry, stop_after_attempt, wait_exponential
 import re
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi import Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.base import BaseHTTPMiddleware
+from jose import jwt
+import time
 
 app = FastAPI()
 app.include_router(api_router, prefix="/api")
@@ -24,6 +27,54 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
+
+class TokenRefreshMiddleware(BaseHTTPMiddleware):
+    """Auto-refresh token if it's expiring soon"""
+    async def dispatch(self, request: Request, call_next):
+        # Skip for public routes
+        public_routes = ["/", "/login", "/register", "/token", "/health", "/trending-topics", "/instructions", "/refresh-token"]
+        if request.url.path in public_routes or request.url.path.startswith("/static"):
+            return await call_next(request)
+        
+        logger.debug(f"[MIDDLEWARE] Processing {request.method} {request.url.path}")
+        
+        # Check access token
+        access_token = request.cookies.get("access_token")
+        if not access_token:
+            logger.warning(f"[MIDDLEWARE] NO ACCESS TOKEN for {request.url.path}")
+        else:
+            try:
+                payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=["HS256"])
+                exp = payload.get("exp")
+                username = payload.get("sub")
+                time_remaining = exp - time.time() if exp else 0
+                logger.info(f"[MIDDLEWARE] Token valid for user {username}, expires in {time_remaining:.0f}s")
+                
+                # If token expires in less than 5 minutes, refresh it
+                if exp and time_remaining < 300:
+                    logger.warning(f"[MIDDLEWARE] Token expiring soon ({time_remaining:.0f}s), auto-refreshing...")
+                    if username:
+                        new_access_token = create_access_token({"sub": username})
+                        request.state.new_access_token = new_access_token
+                        logger.info(f"[MIDDLEWARE] Token refreshed for {username}")
+            except Exception as e:
+                logger.error(f"[MIDDLEWARE] Token verification failed: {e}")
+        
+        try:
+            response = await call_next(request)
+            logger.debug(f"[MIDDLEWARE] Response status: {response.status_code} for {request.url.path}")
+        except Exception as e:
+            logger.error(f"[MIDDLEWARE] Exception during processing: {e}", exc_info=True)
+            raise
+        
+        # Set new token in cookie if middleware refreshed it
+        if hasattr(request.state, "new_access_token"):
+            response.set_cookie("access_token", request.state.new_access_token, httponly=True, max_age=86400)
+            logger.info(f"[MIDDLEWARE] New token set in response cookie")
+        
+        return response
+
+app.add_middleware(TokenRefreshMiddleware)
 
 def get_twitter_client(api_keys: dict):
     """Initialize Twitter client with user's API keys"""
@@ -53,6 +104,7 @@ def get_twitter_client(api_keys: dict):
 def call_openrouter_gemma(prompt: str, max_tokens: int = 150) -> str:
     """Call OpenRouter's API with current working model"""
     try:
+        logger.info(f"[OPENROUTER] Calling OpenRouter API...")
         headers = {
             "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
             "Content-Type": "application/json",
@@ -67,16 +119,27 @@ def call_openrouter_gemma(prompt: str, max_tokens: int = 150) -> str:
             "temperature": 0.7
         }
         
+        logger.debug(f"[OPENROUTER] Prompt length: {len(prompt)} chars")
         response = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
             headers=headers,
             json=payload,
             timeout=30
         )
+        
+        logger.info(f"[OPENROUTER] Response status: {response.status_code}")
+        if response.status_code >= 400:
+            logger.error(f"[OPENROUTER] Error {response.status_code}: {response.text}")
+        
         response.raise_for_status()
-        return response.json()["choices"][0]["message"]["content"]
+        result = response.json()["choices"][0]["message"]["content"]
+        logger.info(f"[OPENROUTER] Success - Generated {len(result)} chars")
+        return result
+    except requests.exceptions.RequestException as e:
+        logger.error(f"[OPENROUTER] Request error: {str(e)}")
+        raise HTTPException(status_code=502, detail=f"OpenRouter API error: {str(e)}")
     except Exception as e:
-        logger.error(f"OpenRouter API error: {str(e)}")
+        logger.error(f"[OPENROUTER] Unexpected error: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="OpenRouter API error")
 
 def clean_tweet_text(tweet: str) -> str:
@@ -91,38 +154,64 @@ async def generate_and_post(
     current_user: User = Depends(get_current_user)
 ):
     """Main endpoint to fetch news, generate tweet, and post to Twitter"""
+    start_time = time.time()
     try:
-        logger.info(f"Processing request for user: {current_user['username']}")
+        logger.info(f"[GENERATE] START - User: {current_user['username']}")
+        logger.debug(f"[GENERATE] Input - Keywords: {user_input.keywords}, Timeframe: {user_input.timeframe}, Tone: {user_input.tone}")
         
         # Get user's API keys
         api_keys = current_user.get("api_keys", {})
         if not api_keys:
+            logger.error(f"[GENERATE] No API keys configured for {current_user['username']}")
             raise HTTPException(status_code=400, detail="No API keys configured")
+        logger.info(f"[GENERATE] API keys loaded: {len(api_keys)} keys found")
         
         # Initialize Twitter client with user's keys
+        logger.info(f"[GENERATE] Initializing Twitter client...")
         twitter_client = get_twitter_client(api_keys)
+        if twitter_client:
+            logger.info(f"[GENERATE] Twitter client initialized successfully")
+        else:
+            logger.warning(f"[GENERATE] Twitter client initialization failed")
         
         # Fetch news articles
+        logger.info(f"[GENERATE] Fetching news articles...")
         articles = fetch_news(user_input.keywords, user_input.timeframe)
         if not articles:
+            logger.error(f"[GENERATE] No articles found for keywords: {user_input.keywords}")
             raise HTTPException(status_code=404, detail="No articles found")
+        logger.info(f"[GENERATE] Found {len(articles)} articles")
         
         # Generate tweet
+        logger.info(f"[GENERATE] Generating tweet...")
         tweet = generate_tweet_summary(articles, user_input.tone)
+        logger.info(f"[GENERATE] Tweet generated: {tweet[:50]}...")
         
         # Post to Twitter if client initialized
         tweet_url = None
         if twitter_client:
             try:
+                logger.info(f"[GENERATE] Posting tweet to Twitter...")
                 clean_tweet = clean_tweet_text(tweet)
+                logger.debug(f"[GENERATE] Clean tweet: {clean_tweet}")
                 response = twitter_client.create_tweet(text=clean_tweet)
                 
                 if response.data:
                     tweet_url = f"https://twitter.com/user/status/{response.data['id']}"
-                    logger.info(f"Tweet posted successfully: {tweet_url}")
+                    logger.info(f"[GENERATE] Tweet posted successfully: {tweet_url}")
+                else:
+                    logger.warning(f"[GENERATE] Twitter response has no data: {response}")
             except tweepy.TweepyException as e:
-                logger.error(f"Twitter post failed: {str(e)}")
+                logger.error(f"[GENERATE] Twitter post failed: {str(e)}")
                 raise HTTPException(status_code=400, detail=f"Twitter error: {str(e)}")
+            except Exception as e:
+                logger.error(f"[GENERATE] Unexpected error during Twitter post: {e}", exc_info=True)
+                raise HTTPException(status_code=500, detail=f"Tweet posting failed: {str(e)}")
+        else:
+            logger.warning(f"[GENERATE] Skipping Twitter post - client not initialized")
+        
+        elapsed = time.time() - start_time
+        logger.info(f"[GENERATE] COMPLETED in {elapsed:.2f}s - User: {current_user['username']}")
         
         return {
             "articles": [a["title"] for a in articles],
@@ -130,10 +219,12 @@ async def generate_and_post(
             "tweet_url": tweet_url
         }
         
-    except HTTPException:
+    except HTTPException as e:
+        logger.error(f"[GENERATE] HTTPException: {e.status_code} - {e.detail}")
         raise
     except Exception as e:
-        logger.exception("API processing error")
+        elapsed = time.time() - start_time
+        logger.exception(f"[GENERATE] FAILED in {elapsed:.2f}s - Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
@@ -148,12 +239,23 @@ def fetch_news(keywords: List[str], timeframe: str) -> List[dict]:
         url += "&from=now-7d"
     
     try:
+        logger.info(f"[GNEWS] Fetching articles for keywords: {keywords} (timeframe: {timeframe})")
         response = requests.get(url, timeout=10)
+        logger.info(f"[GNEWS] Response status: {response.status_code}")
+        
+        if response.status_code >= 400:
+            logger.error(f"[GNEWS] Error {response.status_code}: {response.text}")
+        
         response.raise_for_status()
         articles = response.json().get("articles", [])
-        return [a for a in articles[:3] if a.get("title") and a.get("description")]
+        filtered = [a for a in articles[:3] if a.get("title") and a.get("description")]
+        logger.info(f"[GNEWS] Found {len(filtered)} valid articles")
+        return filtered
     except requests.exceptions.RequestException as e:
-        logger.error(f"News API failed: {str(e)}")
+        logger.error(f"[GNEWS] Request failed: {str(e)}")
+        return []
+    except Exception as e:
+        logger.error(f"[GNEWS] Unexpected error: {str(e)}", exc_info=True)
         return []
 
 def generate_tweet_summary(articles: List[dict], tone: str) -> str:
@@ -214,6 +316,7 @@ async def login_for_access_token(
     username: str = Form(...),
     password: str = Form(...)
 ):
+    """Login endpoint - returns both access and refresh tokens"""
     user = authenticate_user(username, password)
     if not user:
         raise HTTPException(
@@ -221,11 +324,39 @@ async def login_for_access_token(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user["username"]}, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
+    
+    # Create both tokens
+    access_token = create_access_token(data={"sub": user["username"]})
+    refresh_token = create_refresh_token(data={"sub": user["username"]})
+    
+    response = JSONResponse({"access_token": access_token, "token_type": "bearer"})
+    response.set_cookie("access_token", access_token, httponly=True, max_age=86400)  # 24 hours
+    response.set_cookie("refresh_token", refresh_token, httponly=True, max_age=604800)  # 7 days
+    return response
+
+@app.post("/refresh-token")
+async def refresh_token_endpoint(request: Request):
+    """Auto-refresh access token when it's about to expire"""
+    refresh_token = request.cookies.get("refresh_token")
+    
+    if not refresh_token:
+        raise HTTPException(status_code=401, detail="No refresh token found")
+    
+    # Verify refresh token
+    payload = verify_token(refresh_token)
+    if not payload or payload.get("type") != "refresh":
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+    
+    username = payload.get("sub")
+    if not username:
+        raise HTTPException(status_code=401, detail="Token missing username")
+    
+    # Create new access token
+    new_access_token = create_access_token({"sub": username})
+    
+    response = JSONResponse({"success": True})
+    response.set_cookie("access_token", new_access_token, httponly=True, max_age=86400)
+    return response
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
