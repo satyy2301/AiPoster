@@ -5,12 +5,12 @@
 
 ## 🎨 Clean Dark UI
 
-Experience a modern, Twitter-inspired interface with:
-- **Sleek dark theme** inspired by Twitter's design language
-- **Simple & intuitive** navigation
-- **Clean card-based** layout
-- **Responsive design** for all devices
-- **Smooth transitions** and hover effects
+Experience a beautiful, modern interface featuring:
+- **Stunning purple gradient theme** with glassmorphism effects
+- **Intuitive navigation** with smooth animations
+- **Responsive design** that works on all devices
+- **Clean card-based layout** for easy content viewing
+- **Professional aesthetic** with attention to detail
 
 <img width="801" height="808" alt="Screenshot 2025-06-28 162348" src="https://github.com/user-attachments/assets/849cfac0-53e0-4629-a721-3a19d0239579" />
 
@@ -22,39 +22,65 @@ Experience a modern, Twitter-inspired interface with:
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Twitter API](https://img.shields.io/badge/Twitter%20API-v2-1DA1F2.svg)](https://developer.twitter.com)
 
-## 🚀 Features
+## 🚀 Key Features
 
-- **📰 Real-Time News Fetching** – Pulls current news articles using GNews API with keyword-based filtering
-- **💬 Natural Language Prompts** – Describe what you want in plain English; AI extracts keywords automatically
-- **🤖 AI-Powered Content Generation** – Tweet generation using OpenRouter (Mistral AI) with context-aware prompts
-- **🧠 Smart Keyword Extraction** – AI automatically extracts relevant keywords from natural language descriptions
-- **🐦 Automated Twitter Posting** – Publishes tweets automatically via Twitter API with intelligent rate limit handling
-- **🔐 JWT Authentication** – Secure 24-hour access tokens with automatic refresh mechanism
-- **🎨 Modern Gradient UI** – Beautiful purple gradient theme with glassmorphism effects and smooth animations
-- **🔄 Trending Topics** – Real-time trending topics displayed with one-click integration
-- **🌓 Dark Mode** – Polished dark mode with enhanced visibility and elegant color schemes
-- **🌐 Ready-to-Use API** – Fully documented REST endpoints for integration into other systems
-- **⚡ Async Architecture** – High-reliability pipeline using Python async/await for concurrent API calls
-- **🔒 Secure & Configurable** – Environment-based configuration with encrypted API key storage in Supabase
+
+### 🧠 Intelligent Content Generation
+- **💬 Natural Language Prompts** – Just describe what you want: *"Write an enthusiastic tweet about AI breakthroughs"*
+- **🔍 Smart Keyword Extraction** – AI automatically identifies relevant search terms from your description
+- **🤖 Context-Aware AI** – Uses OpenRouter (Mistral 7B) to generate tweets that match your intent and tone
+- **🎯 Tone Customization** – Choose from professional, casual, enthusiastic, or neutral tones
+
+### 📰 Real-Time News Integration
+- **Live News Fetching** – Pulls latest articles from GNews API based on your keywords or prompt
+- **🔥 Trending Topics** – One-click access to what's trending now
+- **📅 Timeframe Control** – Filter by today, last week, or last month
+- **📊 Article Aggregation** – Combines multiple sources for comprehensive coverage
+
+### 🐦 Automated Twitter Posting
+- **One-Click Publishing** – Generate and post tweets instantly
+- **⚡ Rate Limit Handling** – Smart retry logic respects Twitter's API limits
+- **✅ Quality Validation** – Ensures tweets meet character limits and formatting standards
+- **🔗 Direct Links** – Get instant links to your posted tweets
+
+### 🔐 Enterprise-Grade Security
+- **JWT Authentication** – Secure 24-hour access tokens with automatic refresh
+- **🔄 Token Auto-Refresh** – Stay logged in seamlessly without interruptions
+- **🔒 Encrypted Storage** – API keys stored securely in Supabase with Fernet encryption
+- **👤 User Management** – Individual accounts with isolated API key storage
+
+### 🎨 Beautiful User Experience
+- **Modern UI** – Purple gradient backgrounds with glassmorphism effects
+- **📱 Fully Responsive** – Perfect experience on desktop, tablet, and mobile
+- **✨ Smooth Animations** – Slide-in effects, hover states, and transitions
+- **🎯 Intuitive Forms** – Clear labels, helpful hints, and collapsible sections
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Python 3.9+, FastAPI (async/await)
-- **AI/ML**: OpenRouter (Mistral AI) for tweet generation and keyword extraction
-- **APIs**: GNews API, Twitter API v2 (Tweepy)
-- **Database**: Supabase (PostgreSQL) for user management and API key storage
-- **Authentication**: JWT with 24-hour tokens and automatic refresh
-- **Frontend**: Jinja2 templates, Vanilla JavaScript, Modern gradient CSS with glassmorphism
-- **Deployment**: Vercel / Render / Railway ready
+| Layer | Technology |
+|-------|-----------|
+| **Backend** | Python 3.9+, FastAPI (async/await) |
+| **AI/ML** | OpenRouter API (Mistral 7B Instruct) |
+| **APIs** | GNews API, Twitter API v2 (Tweepy) |
+| **Database** | Supabase (PostgreSQL) |
+| **Authentication** | JWT with automatic refresh tokens |
+| **Frontend** | Jinja2 templates, Vanilla JavaScript |
+| **Styling** | Modern CSS with gradients & glassmorphism |
+| **Deployment** | Vercel / Render / Railway ready |
+
+---
 
 ## 📦 Quick Start
 
 ### Prerequisites
-- Python 3.9+
-- Twitter Developer Account & API keys
-- OpenRouter API key
-- GNews API key
-- Supabase account (for user management)
+- Python 3.9 or higher
+- Twitter Developer Account with API v2 access
+- OpenRouter API key ([Get one free](https://openrouter.ai/))
+- GNews API key ([Free tier available](https://gnews.io/))
+- Supabase account ([Sign up free](https://supabase.com/))
+
 
 ### Installation
 
