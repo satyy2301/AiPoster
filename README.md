@@ -3,9 +3,7 @@
 
 **AIPoster** is an automated content pipeline that fetches real-time news, generates engaging social media posts using AI, and publishes them to Twitter—all with minimal human intervention. Built for creators, marketers, and developers who want to maintain an active, relevant social presence.
 
-## 🎨 Clean Dark UI
-
-Experience a beautiful, modern interface featuring:
+**Experience a beautiful, modern interface featuring:**
 - **Stunning purple gradient theme** with glassmorphism effects
 - **Intuitive navigation** with smooth animations
 - **Responsive design** that works on all devices
