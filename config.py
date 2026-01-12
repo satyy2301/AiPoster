@@ -32,13 +32,15 @@ class TimeFrame(str, Enum):
 
 class UserInput(BaseModel):
     """Input model for the generate-and-post endpoint"""
-    keywords: List[str]
+    prompt: Optional[str] = None  # Natural language prompt
+    keywords: Optional[List[str]] = None  # Manual keywords
     timeframe: TimeFrame = TimeFrame.LAST_24H
     tone: str = "neutral"
 
     class Config:
         json_schema_extra = {
             "example": {
+                "prompt": "Write a professional tweet about exciting AI breakthroughs this week",
                 "keywords": ["AI", "technology"],
                 "timeframe": "24h",
                 "tone": "professional"

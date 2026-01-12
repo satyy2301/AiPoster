@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/static/darkmode.css">
     <style>
         :root {
             --primary: #4361ee;
@@ -30,31 +29,64 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f5f7fa;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
             color: var(--dark);
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 2rem auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         header {
             text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--light-gray);
+            position: relative;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 2px;
         }
 
         h1 {
             color: var(--primary);
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             margin-bottom: 0.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .subtitle {
@@ -63,18 +95,44 @@
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.8rem;
+            animation: fadeIn 0.6s ease-out backwards;
+        }
+        
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
             color: var(--dark);
+            font-size: 0.95rem;
+        }
+        
+        label i {
+            color: var(--primary);
+            font-size: 1.1rem;
         }
 
         input[type="text"],
-        select {
+        select,
+        textarea {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid var(--light-gray);
@@ -85,10 +143,21 @@
         }
 
         input[type="text"]:focus,
-        select:focus {
+        select:focus,
+        textarea:focus {
             border-color: var(--primary-light);
             outline: none;
             box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+
+        textarea {
+            line-height: 1.6;
+            min-height: 80px;
+        }
+
+        textarea::placeholder {
+            color: #999;
+            font-style: italic;
         }
 
         .hint {
@@ -100,30 +169,54 @@
 
         .submit-btn {
             width: 100%;
-            padding: 14px;
-            background-color: var(--primary);
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 1.05rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: 'Poppins', sans-serif;
             margin-top: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .submit-btn:hover::before {
+            left: 100%;
         }
 
         .submit-btn:hover {
-            background-color: var(--secondary);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
         }
 
         .submit-btn:active {
-            transform: translateY(0);
+            transform: translateY(-1px);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .loader {
@@ -170,22 +263,50 @@
         .result-container {
             display: none;
             margin-top: 2rem;
-            padding: 1.5rem;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
         }
 
         .result-container h3 {
             color: var(--primary);
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         #tweetResult {
             white-space: pre-line;
-            margin-bottom: 1rem;
-            padding: 1rem;
+            margin-bottom: 1.2rem;
+            padding: 1.2rem;
+            background: white;
+            border-radius: 10px;
+            line-height: 1.8;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        #tweetLink {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        #tweetLink:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
             background: white;
             border-radius: 6px;
             border: 1px solid var(--light-gray);
@@ -360,19 +481,6 @@
             }
         }
 
-        /* If you want to support manual dark mode toggle via class */
-        .dark-mode .trending-topic {
-            background-color: #495057;
-            color: #0080ff;
-        }
-
-        .dark-mode .trending-topic:hover {
-            background-color: #6c757d;
-        }
-
-        .dark-mode .loading-text {
-            color: #090909;
-        }
     </style>
 </head>
 
@@ -385,22 +493,71 @@
             <p class="subtitle">Generate and post news summaries to Twitter</p>
         </header>
 
-        <div class="trending-section" style="margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px;">
-            <h3 style="margin-bottom: 10px;">Trending Topics</h3>
-            <div id="trendingTopics" style="display: flex; flex-wrap: wrap; gap: 8px;">
-                <span class="loading-text">Loading trending topics...</span>
+        <div class="trending-section" style="margin: 20px 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+            <h3 style="margin-bottom: 15px; color: #ffffff; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-fire" style="animation: pulse 2s infinite;"></i> Trending Topics
+            </h3>
+            <div id="trendingTopics" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <span class="loading-text" style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">
+                    <i class="fas fa-spinner fa-spin"></i> Loading trending topics...
+                </span>
             </div>
         </div>
+        
+        <style>
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+            }
+            
+            .trending-topic {
+                padding: 8px 16px;
+                background: rgba(255, 255, 255, 0.95);
+                color: #667eea;
+                border-radius: 20px;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                font-size: 0.9rem;
+                font-weight: 500;
+                border: 2px solid transparent;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            
+            .trending-topic:hover {
+                background: #ffffff;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+                border-color: #667eea;
+            }
+            
+            .trending-topic:active {
+                transform: translateY(0);
+            }
+            
+        </style>
 
         <form id="newsForm">
             <div class="form-group">
-                <label for="keywords">
-                    <i class="fas fa-search"></i> Keywords
+                <label for="prompt">
+                    <i class="fas fa-magic"></i> What do you want to tweet about?
                 </label>
-                <input type="text" id="keywords" name="keywords" placeholder="e.g., technology, AI, innovation"
-                    required>
-                <small class="hint">Separate multiple keywords with commas</small>
+                <textarea id="prompt" name="prompt" rows="3" 
+                    placeholder="e.g., 'Write a humorous tweet about the latest iPhone launch' or 'Share exciting AI breakthroughs this week in a professional tone'"
+                    style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 14px; resize: vertical; transition: border-color 0.3s;"></textarea>
+                <small class="hint"><i class="fas fa-lightbulb"></i> Describe what you want in plain English! AI will find relevant news and create your tweet.</small>
             </div>
+
+            <details style="margin-bottom: 1.5rem; padding: 15px; background: rgba(66, 85, 227, 0.05); border-radius: 8px; border: 1px solid var(--light-gray);">
+                <summary style="cursor: pointer; font-weight: 500; color: var(--primary); padding: 8px 0;">
+                    <i class="fas fa-cog"></i> Advanced: Manual Keywords
+                </summary>
+                <div style="margin-top: 1rem;">
+                    <input type="text" id="keywords-manual" name="keywords" 
+                        placeholder="technology, AI, innovation"
+                        style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 8px; font-family: 'Poppins', sans-serif;">
+                    <small class="hint">Use this only if you want precise keyword control. Separate with commas.</small>
+                </div>
+            </details>
 
             <div class="form-group">
                 <label for="timeframe">
@@ -444,7 +601,6 @@
             </a>
         </div>
     </div>
-    <script src="/static/darkmode.js"></script>
     <script>
         function setActiveNav() {
             const currentPath = window.location.pathname;
@@ -488,9 +644,12 @@
                     return;
                 }
 
-                const keywords = document.getElementById('keywords').value.trim();
-                if (!keywords) {
-                    statusMessage.textContent = 'Please enter at least one keyword';
+                const prompt = document.getElementById('prompt').value.trim();
+                const keywordsManual = document.getElementById('keywords-manual').value.trim();
+
+                // Validate that at least one input is provided
+                if (!prompt && !keywordsManual) {
+                    statusMessage.textContent = 'Please enter a prompt or keywords';
                     statusMessage.className = 'status-message error';
                     statusMessage.style.display = 'block';
                     return;
@@ -501,11 +660,12 @@
                 loader.style.display = 'block';
                 statusMessage.style.display = 'none';
                 resultDiv.style.display = 'none';
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing & Generating...';
 
                 try {
                     const formData = {
-                        keywords: keywords.split(',').map(k => k.trim()),
+                        prompt: prompt || null,
+                        keywords: keywordsManual ? keywordsManual.split(',').map(k => k.trim()) : null,
                         timeframe: document.getElementById('timeframe').value,
                         tone: document.getElementById('tone').value
                     };
@@ -526,20 +686,32 @@
 
                     const data = await response.json();
 
-                    // Show results
-                    tweetResult.textContent = data.tweet;
-                    if (data.tweet_url) {
-                        tweetLink.href = data.tweet_url;
-                        tweetLink.style.display = 'inline';
-                    } else {
-                        tweetLink.style.display = 'none';
+                    // Show extracted keywords if available
+                    let resultsHTML = `<h3><i class="fas fa-check-circle"></i> Generated Tweet</h3>`;
+                    
+                    if (data.extracted_keywords && data.extracted_keywords.length > 0) {
+                        resultsHTML += `<div style="margin-bottom: 15px; padding: 10px; background: rgba(66, 85, 227, 0.1); border-radius: 8px;">
+                            <small style="color: var(--primary); font-weight: 500;">
+                                <i class="fas fa-search"></i> Searched for: ${data.extracted_keywords.join(', ')}
+                            </small>
+                        </div>`;
                     }
+                    
+                    resultsHTML += `<p id="tweetResult">${data.tweet}</p>`;
+                    
+                    if (data.tweet_url) {
+                        resultsHTML += `<a id="tweetLink" href="${data.tweet_url}" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> View on Twitter
+                        </a>`;
+                    }
+                    
+                    resultDiv.innerHTML = resultsHTML;
                     resultDiv.style.display = 'block';
 
                     // Show success message
                     statusMessage.textContent = data.tweet_url
-                        ? 'Tweet posted successfully!'
-                        : 'Tweet generated successfully (not posted)';
+                        ? '✨ Tweet posted successfully!'
+                        : '✨ Tweet generated successfully (not posted to Twitter)';
                     statusMessage.className = 'status-message success';
 
                 } catch (error) {
@@ -574,41 +746,34 @@
                     if (data.topics && data.topics.length > 0) {
                         data.topics.forEach(topic => {
                             const topicElement = document.createElement('span');
-                            topicElement.textContent = topic;
-                            topicElement.style.cursor = 'pointer';
-                            topicElement.style.padding = '5px 10px';
-                            topicElement.style.background = '#e1e1e1';
-                            topicElement.style.borderRadius = '15px';
-                            topicElement.style.transition = 'background 0.3s';
-
-                            topicElement.addEventListener('mouseover', () => {
-                                topicElement.style.background = '#d0d0d0';
-                            });
-
-                            topicElement.addEventListener('mouseout', () => {
-                                topicElement.style.background = '#e1e1e1';
-                            });
+                            topicElement.className = 'trending-topic';
+                            topicElement.innerHTML = `<i class="fas fa-hashtag" style="font-size: 0.8rem; opacity: 0.7;"></i> ${topic}`;
 
                             topicElement.addEventListener('click', () => {
-                                // Add the topic to keywords input
-                                const keywordsInput = document.getElementById('keywords');
-                                const currentKeywords = keywordsInput.value;
+                                // Add the topic to prompt or keywords input
+                                const promptInput = document.getElementById('prompt');
+                                const keywordsInput = document.getElementById('keywords-manual');
 
-                                if (currentKeywords) {
-                                    // Check if topic already exists
-                                    const keywordsArray = currentKeywords.split(',').map(k => k.trim());
-                                    if (!keywordsArray.includes(topic)) {
-                                        keywordsInput.value = currentKeywords + ', ' + topic;
-                                    }
-                                } else {
+                                // If prompt is empty, suggest using it
+                                if (!promptInput.value.trim()) {
+                                    promptInput.value = `Write a tweet about ${topic}`;
+                                    promptInput.focus();
+                                } else if (!keywordsInput.value.trim()) {
+                                    // If prompt exists, add to keywords
                                     keywordsInput.value = topic;
+                                } else {
+                                    // Append to existing keywords
+                                    const keywordsArray = keywordsInput.value.split(',').map(k => k.trim());
+                                    if (!keywordsArray.includes(topic)) {
+                                        keywordsInput.value = keywordsInput.value + ', ' + topic;
+                                    }
                                 }
                             });
 
                             topicsContainer.appendChild(topicElement);
                         });
                     } else {
-                        topicsContainer.innerHTML = '<span>No trending topics available at the moment.</span>';
+                        topicsContainer.innerHTML = '<span style="color: rgba(255,255,255,0.8);">No trending topics available at the moment.</span>';
                     }
                 })
                 .catch(error => {

@@ -142,6 +142,33 @@ def call_openrouter_gemma(prompt: str, max_tokens: int = 150) -> str:
         logger.error(f"[OPENROUTER] Unexpected error: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="OpenRouter API error")
 
+def extract_keywords_from_prompt(prompt: str) -> List[str]:
+    """Use AI to extract searchable keywords from natural language"""
+    logger.info(f"[KEYWORDS] Extracting keywords from prompt: '{prompt[:100]}...'")
+    
+    extraction_prompt = f"""Extract 2-4 key search terms from this request that would work well for a news API search. Return ONLY the keywords separated by commas, no explanation or quotes.
+
+User request: "{prompt}"
+
+Keywords:"""
+    
+    try:
+        response = call_openrouter_gemma(extraction_prompt, max_tokens=50)
+        # Clean up the response
+        keywords = [k.strip().strip('"').strip("'") for k in response.split(',')]
+        keywords = [k for k in keywords if k and len(k) > 2][:4]  # Limit to 4 keywords
+        logger.info(f"[KEYWORDS] Extracted keywords: {keywords}")
+        return keywords
+    except Exception as e:
+        logger.error(f"[KEYWORDS] Extraction failed: {e}, using fallback method")
+        # Fallback: simple word extraction
+        words = prompt.lower().split()
+        stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 
+                     'write', 'create', 'generate', 'post', 'tweet', 'about', 'make', 'share'}
+        keywords = [w for w in words if w not in stop_words and len(w) > 3][:4]
+        logger.info(f"[KEYWORDS] Fallback keywords: {keywords}")
+        return keywords
+
 def clean_tweet_text(tweet: str) -> str:
     """Ensure tweet is text-only and meets Twitter requirements"""
     tweet = re.sub(r'http\S+', '[URL]', tweet)
@@ -157,7 +184,25 @@ async def generate_and_post(
     start_time = time.time()
     try:
         logger.info(f"[GENERATE] START - User: {current_user['username']}")
-        logger.debug(f"[GENERATE] Input - Keywords: {user_input.keywords}, Timeframe: {user_input.timeframe}, Tone: {user_input.tone}")
+        
+        # NEW: Support both prompt and keywords
+        user_prompt = user_input.prompt
+        keywords = user_input.keywords or []
+        
+        # Extract keywords from natural language prompt if provided
+        if user_prompt and not keywords:
+            logger.info(f"[GENERATE] User prompt: '{user_prompt}'")
+            keywords = extract_keywords_from_prompt(user_prompt)
+            logger.info(f"[GENERATE] Extracted keywords: {keywords}")
+        elif user_prompt:
+            logger.info(f"[GENERATE] Using both prompt and manual keywords: {keywords}")
+        else:
+            logger.info(f"[GENERATE] Using manual keywords: {keywords}")
+        
+        if not keywords:
+            raise HTTPException(status_code=400, detail="No keywords could be extracted. Please provide more specific details.")
+        
+        logger.debug(f"[GENERATE] Final keywords: {keywords}, Timeframe: {user_input.timeframe}, Tone: {user_input.tone}")
         
         # Get user's API keys
         api_keys = current_user.get("api_keys", {})
@@ -176,15 +221,19 @@ async def generate_and_post(
         
         # Fetch news articles
         logger.info(f"[GENERATE] Fetching news articles...")
-        articles = fetch_news(user_input.keywords, user_input.timeframe)
+        articles = fetch_news(keywords, user_input.timeframe)
         if not articles:
-            logger.error(f"[GENERATE] No articles found for keywords: {user_input.keywords}")
-            raise HTTPException(status_code=404, detail="No articles found")
+            logger.error(f"[GENERATE] No articles found for keywords: {keywords}")
+            raise HTTPException(status_code=404, detail=f"No articles found for keywords: {', '.join(keywords)}")
         logger.info(f"[GENERATE] Found {len(articles)} articles")
         
-        # Generate tweet
+        # Generate tweet with context from original prompt
         logger.info(f"[GENERATE] Generating tweet...")
-        tweet = generate_tweet_summary(articles, user_input.tone)
+        if user_prompt:
+            # Use the original prompt for better context
+            tweet = generate_tweet_with_prompt(articles, user_input.tone, user_prompt)
+        else:
+            tweet = generate_tweet_summary(articles, user_input.tone)
         logger.info(f"[GENERATE] Tweet generated: {tweet[:50]}...")
         
         # Post to Twitter if client initialized
@@ -216,7 +265,8 @@ async def generate_and_post(
         return {
             "articles": [a["title"] for a in articles],
             "tweet": tweet,
-            "tweet_url": tweet_url
+            "tweet_url": tweet_url,
+            "extracted_keywords": keywords  # Send back extracted keywords for user feedback
         }
         
     except HTTPException as e:
@@ -282,6 +332,35 @@ def generate_tweet_summary(articles: List[dict], tone: str) -> str:
         return call_openrouter_gemma(prompt)
     except Exception as e:
         logger.error(f"Tweet generation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Tweet generation failed")
+
+def generate_tweet_with_prompt(articles: List[dict], tone: str, user_prompt: str) -> str:
+    """Generate a tweet using the user's original prompt for better context"""
+    article_texts = "\n\n".join([
+        f"Title: {article['title']}\nDescription: {article['description']}"
+        for article in articles if article.get('title')
+    ])
+    
+    prompt = f"""User Request: {user_prompt}
+
+Based on these recent news articles, create a Twitter post that fulfills the user's request:
+
+Articles:
+{article_texts}
+
+Requirements:
+- Tone: {tone}
+- Length: Maximum 280 characters
+- Include: 2-3 relevant hashtags
+- Style: Match the user's intent while being engaging
+- Replace any URLs with [URL]
+
+Twitter Post:"""
+    
+    try:
+        return call_openrouter_gemma(prompt, max_tokens=200)
+    except Exception as e:
+        logger.error(f"Tweet generation with prompt failed: {str(e)}")
         raise HTTPException(status_code=500, detail="Tweet generation failed")
 
 templates = Jinja2Templates(directory="templates")

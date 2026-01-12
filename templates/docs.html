@@ -1,15 +1,11 @@
-x
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Aggregator - API Documentation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <title>SYSTEM PROTOCOLS | NEURAL NETWORK</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/static/darkmode.css">
     <style>
         :root {
             --primary: #4361ee;
@@ -31,10 +27,12 @@ x
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f5f7fa;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
             color: var(--dark);
             line-height: 1.6;
-            padding-top: 70px;
+            padding-top: 80px;
+            min-height: 100vh;
         }
 
         .navbar {
@@ -43,7 +41,7 @@ x
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             width: 100%;
             position: fixed;
             top: 0;
@@ -88,9 +86,22 @@ x
             max-width: 900px;
             margin: 2rem auto;
             padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .docs-header {
@@ -101,9 +112,12 @@ x
         }
 
         .docs-header h1 {
-            color: var(--primary);
             font-size: 2.2rem;
             margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .docs-header p {
@@ -118,18 +132,32 @@ x
         }
 
         .docs-section h2 {
-            color: var(--primary);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 1rem;
             font-size: 1.5rem;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 600;
+        }
+        
+        .docs-section h2 i {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .docs-section p,
-        .docs-section ul {
+        .docs-section ul,
+        .docs-section li,
+        .docs-section ol {
             margin-bottom: 1rem;
-            color: var(--dark);
+            color: #2d3748;
+            line-height: 1.7;
         }
 
         .docs-section ul {
@@ -212,20 +240,106 @@ x
             }
         }
 
-        .api-guide {
-            background-color: #f8fafc;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            border-left: 4px solid var(--primary);
+        .api-setup-container {
+            margin: 2rem 0;
         }
-
-        .api-guide h3 {
-            color: var(--primary);
-            margin-bottom: 1rem;
+        
+        .api-setup-container h2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .api-service {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+        
+        .api-service:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+        
+        .api-service h3 {
+            color: #667eea;
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 600;
+        }
+        
+        .api-steps {
+            list-style: none;
+            counter-reset: step-counter;
+            padding-left: 0;
+        }
+        
+        .api-steps li {
+            counter-increment: step-counter;
+            margin-bottom: 1rem;
+            padding-left: 2.5rem;
+            position: relative;
+            line-height: 1.6;
+        }
+        
+        .api-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 1.8rem;
+            height: 1.8rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .api-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .api-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        .api-note {
+            background: rgba(118, 75, 162, 0.1);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 3px solid #764ba2;
+        }
+        
+        .api-plan-info {
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        .api-key-item {
+            margin-left: 2rem;
+            padding: 0.4rem 0;
+            color: #555;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
         }
 
         .step {
@@ -279,24 +393,22 @@ x
 
     <div class="docs-container">
         <div class="docs-header">
-            <h1><i class="fas fa-book-open"></i> API Documentation</h1>
-            <p>Everything you need to integrate with the News Aggregator service</p>
-        </div>
-
-        <div class="docs-section">
-            <h2><i class="fas fa-info-circle"></i> Getting Started</h2>
-            <p>The News Aggregator API allows you to automatically generate and post news summaries to Twitter. Follow
-                these simple steps to begin:</p>
-            <ol>
-                <li>Configure your API keys in the <a href="/dashboard">Settings</a> page</li>
-                <li>Authenticate using your JWT token</li>
-                <li>Make requests to the API endpoints</li>
-            </ol>
-
-            <div class="note">
-                <p><strong>Note:</strong> All API requests require authentication. See the Authentication section below
-                    for details.</p>
+                <h1><i class="fas fa-book"></i> API Documentation</h1>
+                <p>Complete guide to integrating with AIPoster</p>
             </div>
+
+            <div class="docs-section">
+                <h2><i class="fas fa-rocket"></i> Getting Started</h2>
+                <p>The AIPoster API allows you to automatically generate and post news summaries to Twitter. Follow these steps:</p>
+                <ol>
+                    <li>Configure your API keys in the <a href="/dashboard">Settings</a> page</li>
+                    <li>Authenticate using your JWT token</li>
+                    <li>Make requests to the API endpoints</li>
+                </ol>
+
+                <div class="note">
+                    <p><strong>Note:</strong> All API requests require authentication. See the Authentication section below for details.</p>
+                </div>
         </div>
 
         <div class="docs-section">
@@ -398,11 +510,12 @@ const generateTweet = async (token) => {
         </div>
 
         <div class="docs-section">
+            <h2><i class="fas fa-wrench"></i> API Key Setup Instructions</h2>
+            <p style="margin-bottom: 2rem; color: #555; line-height: 1.8;">Follow these step-by-step guides to obtain your API keys for each service. All services offer free tiers suitable for getting started.</p>
+            
             <div class="api-setup-container">
-                <h2>API Key Setup Instructions</h2>
-
                 <div class="api-service">
-                    <h3>GNews API Key</h3>
+                    <h3><i class="fas fa-newspaper"></i> GNews API Key</h3>
                     <ol class="api-steps">
                         <li>Go to the <a href="https://gnews.io/" class="api-link" target="_blank">GNews website</a> and
                             click "Get API Key"</li>
@@ -417,7 +530,7 @@ const generateTweet = async (token) => {
                 </div>
 
                 <div class="api-service">
-                    <h3>OpenRouter API Key</h3>
+                    <h3><i class="fas fa-brain"></i> OpenRouter API Key</h3>
                     <ol class="api-steps">
                         <li>Visit <a href="https://openrouter.ai/" class="api-link" target="_blank">OpenRouter.ai</a>
                             and click "Sign Up"</li>
@@ -431,7 +544,7 @@ const generateTweet = async (token) => {
                 </div>
 
                 <div class="api-service">
-                    <h3>Twitter API Keys</h3>
+                    <h3><i class="fab fa-twitter"></i> Twitter API Keys</h3>
                     <ol class="api-steps">
                         <li>Go to the <a href="https://developer.twitter.com/" class="api-link" target="_blank">Twitter
                                 Developer Portal</a></li>
@@ -449,7 +562,6 @@ const generateTweet = async (token) => {
             </div>
         </div>
     </div>
-    <script src="/static/darkmode.js"></script>
     <script>
         // Handle navigation active states
         function setActiveNav() {
@@ -473,6 +585,7 @@ const generateTweet = async (token) => {
             window.location.href = '/login';
         });
     </script>
+    </div>
 </body>
 
 </html>

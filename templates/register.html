@@ -3,60 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | News Aggregator</title>
+    <title>REGISTRATION PROTOCOL | NEURAL NETWORK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --accent: #4895ef;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --success: #4cc9f0;
-            --error: #f72585;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
             min-height: 100vh;
-            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
         
         .auth-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 450px;
             width: 100%;
-            max-width: 400px;
-            padding: 2.5rem;
-            transition: all 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease-out;
         }
         
-        .auth-container:hover {
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-        
-        .logo {
-            text-align: center;
-            margin-bottom: 2rem;
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .logo h1 {
-            color: var(--primary);
-            margin: 0;
-            font-size: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
             font-weight: 700;
         }
         
         .logo p {
-            color: var(--accent);
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 2rem;
+            font-size: 1rem;
         }
         
         .form-group {
@@ -67,79 +72,42 @@
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--dark);
+            font-weight: 600;
+            color: #212529;
         }
         
         .form-control {
             width: 100%;
-            padding: 12px 16px;
+            padding: 12px 15px;
             border: 2px solid #e9ecef;
             border-radius: 8px;
             font-size: 1rem;
             transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
         }
         
         .form-control:focus {
-            border-color: var(--accent);
+            border-color: #667eea;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn:hover {
-            background-color: var(--secondary);
-            transform: translateY(-2px);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .auth-footer {
-            text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .auth-footer a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .auth-footer a:hover {
-            text-decoration: underline;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
         
         .password-toggle {
             position: absolute;
-            right: 10px;
-            top: 38px;
+            right: 15px;
+            top: 40px;
             cursor: pointer;
-            color: var(--dark);
-            opacity: 0.6;
+            color: #6c757d;
+            transition: color 0.3s;
         }
         
         .password-toggle:hover {
-            opacity: 1;
+            color: #667eea;
         }
         
         .progress-bar {
             height: 4px;
-            background-color: #e9ecef;
+            background: #e9ecef;
             border-radius: 2px;
             margin-top: 8px;
             overflow: hidden;
@@ -147,45 +115,130 @@
         
         .progress {
             height: 100%;
-            width: 0%;
-            background-color: var(--error);
-            transition: width 0.3s;
+            width: 0;
+            transition: all 0.3s;
+            border-radius: 2px;
         }
         
-        /* Password strength indicators */
-        .weak { background-color: #f72585; width: 33%; }
-        .medium { background-color: #f8961e; width: 66%; }
-        .strong { background-color: #4cc9f0; width: 100%; }
+        .progress.weak {
+            width: 33%;
+            background: #f72585;
+        }
         
-        /* Loading animation */
+        .progress.medium {
+            width: 66%;
+            background: #ffa500;
+        }
+        
+        .progress.strong {
+            width: 100%;
+            background: #4cc9f0;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
         .loader {
             display: none;
-            margin: 10px auto;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--accent);
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
         
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #6c757d;
+        }
+        
+        .auth-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .auth-footer a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .auth-container {
+                padding: 2rem;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="auth-container">
         <div class="logo">
-            <h1>NewsAggregator</h1>
-            <p>Create your account to get started</p>
+            <h1><i class="fas fa-bolt"></i> AIPoster</h1>
+            <p>Create your account</p>
         </div>
         
         <form id="registerForm">
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" class="form-control" placeholder="Enter your username" required>
+                <input type="text" id="username" class="form-control" placeholder="Choose a username" required>
             </div>
             
             <div class="form-group">
@@ -196,13 +249,13 @@
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" class="form-control" placeholder="Create a password" required>
-                <span class="password-toggle" onclick="togglePassword()">👁️</span>
+                <span class="password-toggle" onclick="togglePassword()"><i class="fas fa-eye"></i></span>
                 <div class="progress-bar">
                     <div class="progress" id="password-strength"></div>
                 </div>
             </div>
             
-            <button type="submit" class="btn">Create Account</button>
+            <button type="submit" class="btn"><i class="fas fa-user-plus"></i> Create Account</button>
             <div class="loader" id="loader"></div>
             
             <div class="auth-footer">
