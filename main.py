@@ -195,11 +195,19 @@ def register_page(request: Request):
 
 @app.post("/register")
 async def register_user(user_data: dict = Body(...)):
-    return auth.create_user(
-        username=user_data["username"],
-        email=user_data["email"],
-        password=user_data["password"]
-    )
+    try:
+        result = auth.create_user(
+            username=user_data["username"],
+            email=user_data["email"],
+            password=user_data["password"]
+        )
+        return result
+    except Exception as e:
+        logger.error(f"Registration failed: {str(e)}")
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
 
 @app.post("/token")
 async def login_for_access_token(
