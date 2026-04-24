@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     SUPABASE_KEY: Optional[str] = Field(default=None, description="Supabase Key")
     SECRET_KEY: str = Field(default="fallback-secret-key-change-in-production", description="JWT Secret Key")
     ENCRYPTION_KEY: str = Field(default="fallback-encryption-key-change-in-production", description="Encryption Key")
+    APP_BASE_URL: str = Field(default="http://localhost:8000", description="Public app URL used in API metadata")
     
     class Config:
         env_file = ".env"
@@ -56,6 +57,7 @@ try:
     logger.info(f"Supabase URL loaded: {bool(settings.SUPABASE_URL)}")
     logger.info(f"Supabase Key loaded: {bool(settings.SUPABASE_KEY)}")
     logger.info(f"GNews API Key loaded: {bool(settings.GNEWS_API_KEY)}")
+    logger.info(f"App base URL loaded: {settings.APP_BASE_URL}")
     
 except Exception as e:
     logger.error(f"Error loading settings: {e}")

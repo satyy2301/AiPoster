@@ -1,6 +1,28 @@
 
 # 🤖 AIPoster – AI-Powered News Aggregator & Auto-Tweeter
 
+## Quick Public Deploy (Fastest)
+
+The easiest way to deploy this app for public use is Render.
+
+1. Push this repository to GitHub.
+2. In Render, click New + > Blueprint and select this repo.
+3. Render will detect `render.yaml` automatically.
+4. Set environment variables in Render:
+  - `GNEWS_API_KEY`
+  - `OPENROUTER_API_KEY`
+  - `SUPABASE_URL`
+  - `SUPABASE_KEY`
+  - `ENCRYPTION_KEY`
+  - Optional: override `APP_BASE_URL` with your real Render URL
+5. Deploy and open `https://<your-service>.onrender.com/health` to confirm status `ok`.
+
+Start command used in production:
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
 **AIPoster** is an automated content pipeline that fetches real-time news, generates engaging social media posts using AI, and publishes them to Twitter—all with minimal human intervention. Built for creators, marketers, and developers who want to maintain an active, relevant social presence.
 
 **Experience a beautiful, modern interface featuring:**

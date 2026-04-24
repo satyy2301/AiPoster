@@ -108,7 +108,7 @@ def call_openrouter_gemma(prompt: str, max_tokens: int = 150) -> str:
         headers = {
             "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost:8000/",
+            "HTTP-Referer": settings.APP_BASE_URL,
             "X-Title": "News Aggregator"
         }
         
@@ -452,6 +452,11 @@ async def documentation(request: Request):
 @app.get("/home", response_class=HTMLResponse)
 async def home_redirect(request: Request):
     return RedirectResponse(url="/")
+
+@app.get("/health")
+async def health_check():
+    """Health endpoint for uptime checks and deployment platforms."""
+    return {"status": "ok"}
 
 # Add to main.py
 
